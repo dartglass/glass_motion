@@ -5,6 +5,7 @@ import 'dart:html';
 import 'dart:math' as Math;
 
 part 'motion_handler.dart';
+part 'motion_calibration.dart';
 
 
 class GlassMotion {
