@@ -3,33 +3,39 @@ part of glass_motion;
 class MotionHandler{
   
   static const double timeConstant = 500.0;
+  static const avgMovementSampleSize = 15;
+  
   double _alpha;
   double _xRaw,_yRaw,_zRaw;
   double _gx,_gy,_gz;
-  double _x,_y,_z;
+  double x,y,z;
   
-  double acceleration;
+  List<double> accelerationHistory;
+  
+  double acceleration = 0.0;
   
   int updateRate;
-  int previousTimestamp;
-  
+  int _previousTimestamp;
+    
   bool gravityFilterEnable;
    
   MotionHandler(){
     _gx = 0.0;
     _gy = 0.0;
     _gz = 0.0;
-    _x = 0.0;
-    _y = 0.0;
-    _z = 0.0;
+    x = 0.0;
+    y = 0.0;
+    z = 0.0;
     
     gravityFilterEnable = true;
+    accelerationHistory = new List<double>();
   }
+  
   
   onDeviceMotion(DeviceMotionEvent event){
     
-    updateRate = event.timeStamp - previousTimestamp;
-    previousTimestamp = event.timeStamp;
+    updateRate = event.timeStamp - _previousTimestamp;
+    _previousTimestamp = event.timeStamp;
        
     _xRaw = event.accelerationIncludingGravity.x;
     _yRaw = event.accelerationIncludingGravity.y;
@@ -43,18 +49,34 @@ class MotionHandler{
       _gy = (_alpha * _gy) + ((1 - _alpha) * _yRaw);
       _gz = (_alpha * _gz) + ((1 - _alpha) * _zRaw);
      
-      _x = _xRaw - _gx;
-      _y = _yRaw - _gy;
-      _z = _zRaw - _gz;
+      x = _xRaw - _gx;
+      y = _yRaw - _gy;
+      z = _zRaw - _gz;
     }
     else{
-      _x = _xRaw;
-      _y = _yRaw;
-      _z = _zRaw;   
+      x = _xRaw;
+      y = _yRaw;
+      z = _zRaw;   
     }
     
-    acceleration = Math.sqrt(_x*_x + _y*_y + _z*_z);
+    acceleration = Math.sqrt(x*x + y*y + z*z);
     
+    accelerationHistory.add(acceleration);
+    
+    if(accelerationHistory.length > avgMovementSampleSize){
+      accelerationHistory.removeAt(0);  
+    }
   }
+  
+  double getAvgMovement(){
+    double rVal;
+    double accTotal;
+    
+    for(double val in accelerationHistory){
+      accTotal += val;    
+    }
+    return accTotal/accelerationHistory.length;
+  }
+  
   
 }
