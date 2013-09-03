@@ -3,6 +3,7 @@ library glass_motion;
 
 import 'dart:html';
 import 'dart:math' as Math;
+import 'package:vector_math/vector_math.dart';
 
 part 'src/motion_handler.dart';
 part 'src/motion_calibration.dart';

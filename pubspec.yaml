@@ -4,3 +4,4 @@ author: Ryan Weaving
 description: Helper library for using motion with Google glass
 dependencies:
   browser: any
+  vector_math: any
