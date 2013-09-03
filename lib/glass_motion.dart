@@ -25,11 +25,12 @@ class GlassMotion {
     
     _motionHandler = new MotionHandler();
     motionEnable = true;
-    
   }
  
  double get acceleration => _motionHandler.acceleration;
  double get movement => _motionHandler.getAvgMovement();
+ double get yaw => _motionHandler.yaw;
+ double get pitch => _motionHandler.pitch;
  
   _onDeviceMotion(DeviceMotionEvent event){
     
