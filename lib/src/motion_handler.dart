@@ -3,7 +3,7 @@ part of glass_motion;
 class MotionHandler{
   
   static const double timeConstant = 500.0;
-  static const avgMovementSampleSize = 15;
+  static const avgMovementSampleSize = 20;
   
   double _alpha;
   double _xRaw,_yRaw,_zRaw;
@@ -12,10 +12,18 @@ class MotionHandler{
   
   List<double> accelerationHistory;
   
-  double acceleration;
+  double get acceleration => accelerationVectorGravityComp.length;
+  double get yaw => Math.atan(accelerationVectorNormalized.x/(-accelerationVectorNormalized.y))*radians2degrees;
+  double get pitch => Math.atan((accelerationVectorNormalized.x*accelerationVectorNormalized.x + (accelerationVectorNormalized.y)*(accelerationVectorNormalized.y))/accelerationVectorNormalized.z)*radians2degrees;
+  
   
   int updateRate;
   int _previousTimestamp;
+  
+  Vector3 accelerationVector;
+  Vector3 accelerationVectorGravityComp;
+  Vector3 accelerationVectorNormalized;
+  Vector3 accelerationVectorSmoothed;
     
   bool gravityFilterEnable;
    
@@ -27,10 +35,14 @@ class MotionHandler{
     y = 0.0;
     z = 0.0;
     _previousTimestamp = 0;
-    acceleration = 0.0; 
     
     gravityFilterEnable = true;
     accelerationHistory = new List<double>();
+    
+    accelerationVector = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorGravityComp = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorSmoothed = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorNormalized = new Vector3(0.0, 0.0, 0.0);
   }
   
   
@@ -42,6 +54,10 @@ class MotionHandler{
     _xRaw = event.accelerationIncludingGravity.x;
     _yRaw = event.accelerationIncludingGravity.y;
     _zRaw = event.accelerationIncludingGravity.z;
+    
+    accelerationVector.setValues(_xRaw, _yRaw, _zRaw);
+    
+    accelerationVectorNormalized = accelerationVector.normalized();
     
     // Enable if we want to filter the effects of gravity
     if(gravityFilterEnable){
@@ -59,11 +75,11 @@ class MotionHandler{
       x = _xRaw;
       y = _yRaw;
       z = _zRaw;   
-    }
+   }
     
-    acceleration = Math.sqrt(x*x + y*y + z*z);
+    accelerationVectorGravityComp.setValues(x, y, z);
     
-    accelerationHistory.add(acceleration);
+    accelerationHistory.add(accelerationVectorGravityComp.length);//Math.sqrt(x*x + y*y + z*z)
     
     if(accelerationHistory.length > avgMovementSampleSize){
       accelerationHistory.removeAt(0);  
