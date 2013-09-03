@@ -12,7 +12,7 @@ class MotionHandler{
   
   List<double> accelerationHistory;
   
-  double acceleration = 0.0;
+  double acceleration;
   
   int updateRate;
   int _previousTimestamp;
@@ -26,17 +26,19 @@ class MotionHandler{
     x = 0.0;
     y = 0.0;
     z = 0.0;
+    _previousTimestamp = 0;
+    acceleration = 0.0; 
     
     gravityFilterEnable = true;
     accelerationHistory = new List<double>();
   }
   
   
-  onDeviceMotion(DeviceMotionEvent event){
+  bool onDeviceMotion(DeviceMotionEvent event){
     
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
-       
+
     _xRaw = event.accelerationIncludingGravity.x;
     _yRaw = event.accelerationIncludingGravity.y;
     _zRaw = event.accelerationIncludingGravity.z;
@@ -66,11 +68,12 @@ class MotionHandler{
     if(accelerationHistory.length > avgMovementSampleSize){
       accelerationHistory.removeAt(0);  
     }
+    
+    return true;
   }
   
   double getAvgMovement(){
-    double rVal;
-    double accTotal;
+    double accTotal = 0.0;
     
     for(double val in accelerationHistory){
       accTotal += val;    
