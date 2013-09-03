@@ -1,0 +1,6 @@
+name: glass_motion
+version: 0.0.1
+author: Ryan Weaving
+description: Helper library for using motion with Google glass
+dependencies:
+  browser: any
