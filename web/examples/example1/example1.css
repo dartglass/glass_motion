@@ -23,11 +23,16 @@ h1, p {
 #sample_text_id {
   font-size: 30pt;
   text-align: center;
-  margin-top: 140px;
+  margin-top: 50px;
 }
 
 #sample_text_id2 {
   font-size: 30pt;
   text-align: center;
-  margin-top: 140px;
+  margin-top: 40px;
+}
+#sample_text_id3 {
+  font-size: 30pt;
+  text-align: center;
+  margin-top: 40px;
 }
