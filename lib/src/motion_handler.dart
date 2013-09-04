@@ -2,17 +2,13 @@ part of glass_motion;
 
 class MotionHandler{
   
-  static const double timeConstant = 500.0;
+  static const double timeConstant = 500.0; // For gravity Compensation update intervals > then timeConstant will correct faster
   static const avgMovementSampleSize = 20;
   
   double _alpha;
-  double _xRaw,_yRaw,_zRaw;
-  double _gx,_gy,_gz;
-  double x,y,z;
-  
   List<double> accelerationHistory;
   
-  double get acceleration => accelerationVectorGravityComp.length;
+  double get acceleration => _gravityComp.length;
   double get yaw => Math.atan(accelerationVectorNormalized.x/(-accelerationVectorNormalized.y))*radians2degrees;
   double get pitch => Math.atan((accelerationVectorNormalized.x*accelerationVectorNormalized.x + (accelerationVectorNormalized.y)*(accelerationVectorNormalized.y))/accelerationVectorNormalized.z)*radians2degrees;
   double get tilt => Math.atan(accelerationVectorNormalized.z/(-accelerationVectorNormalized.y))*radians2degrees;
@@ -21,71 +17,49 @@ class MotionHandler{
   int _previousTimestamp;
   
   Vector3 accelerationVector;
-  Vector3 accelerationVectorGravityComp;
+  Vector3 accelerationVectorPrevious;
   Vector3 accelerationVectorNormalized;
-  Vector3 accelerationVectorSmoothed;
     
-  bool gravityFilterEnable;
+  Vector3 accelerationVectorGravityCompensated;
+  Vector3 _gravityComp; // Gravity Compensation vector
+  
+  Vector3 accelerationVectorGravityCompOLD;
    
   MotionHandler(){
-    _gx = 0.0;
-    _gy = 0.0;
-    _gz = 0.0;
-    x = 0.0;
-    y = 0.0;
-    z = 0.0;
     _previousTimestamp = 0;
     
-    gravityFilterEnable = true;
     accelerationHistory = new List<double>();
     
     accelerationVector = new Vector3(0.0, 0.0, 0.0);
-    accelerationVectorGravityComp = new Vector3(0.0, 0.0, 0.0);
-    accelerationVectorSmoothed = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorPrevious = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorNormalized = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorGravityCompensated = new Vector3(0.0, 0.0, 0.0);
+    _gravityComp = new Vector3(0.0, 0.0, 0.0);
   }
   
   
-  bool onDeviceMotion(DeviceMotionEvent event){
+  void onDeviceMotion(DeviceMotionEvent event){
     
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
-
-    _xRaw = event.accelerationIncludingGravity.x;
-    _yRaw = event.accelerationIncludingGravity.y;
-    _zRaw = event.accelerationIncludingGravity.z;
     
-    accelerationVector.setValues(_xRaw, _yRaw, _zRaw);
+    accelerationVectorPrevious = accelerationVector.clone();
+    accelerationVector.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
     
     accelerationVectorNormalized = accelerationVector.normalized();
     
-    // Enable if we want to filter the effects of gravity
-    if(gravityFilterEnable){
-       _alpha = timeConstant / (timeConstant + updateRate);
-      
-      _gx = (_alpha * _gx) + ((1 - _alpha) * _xRaw);
-      _gy = (_alpha * _gy) + ((1 - _alpha) * _yRaw);
-      _gz = (_alpha * _gz) + ((1 - _alpha) * _zRaw);
-     
-      x = _xRaw - _gx;
-      y = _yRaw - _gy;
-      z = _zRaw - _gz;
-    }
-    else{
-      x = _xRaw;
-      y = _yRaw;
-      z = _zRaw;   
-   }
+    // Do Gravity Compensation
+    _alpha = timeConstant / (timeConstant + updateRate); // Calculate how fast we need to compensante faster if updateRate > timeConstant
+    _gravityComp.scale(_alpha);
+    _gravityComp.add(accelerationVector.clone().scaled(1-_alpha)); 
     
-    accelerationVectorGravityComp.setValues(x, y, z);
+    accelerationVectorGravityCompensated = accelerationVector.clone().sub(_gravityComp); 
     
-    accelerationHistory.add(accelerationVectorGravityComp.length);//Math.sqrt(x*x + y*y + z*z)
+    accelerationHistory.add(accelerationVectorGravityCompensated.length);
     
     if(accelerationHistory.length > avgMovementSampleSize){
       accelerationHistory.removeAt(0);  
     }
-    
-    return true;
   }
   
   double getAvgMovement(){
