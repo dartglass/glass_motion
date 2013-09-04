@@ -1,0 +1,97 @@
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+ul li {
+  height: 555px;
+  width: 100%;
+  background-repeat: no-repeat;
+}
+
+p {
+  padding: 0px;
+  margin: 0px;
+}
+
+.glass-text {
+  font-family: 'Roboto';
+  font-weight: 100;
+  font-size: 40px;
+  text-shadow: 0 1px 1px #000;
+}
+
+/*
+  Text sizing. We use 5 sizes: 70px, 50px, 40px, 34px, 30px. We additionally have a 90px size for
+  very short, important strings and a 26px size for footers.
+ */
+.text-xx-large {
+  font-weight: 100;
+  font-size: 90px;
+  letter-spacing: -1px;
+  line-height: 1.2em;
+}
+
+.text-x-large {
+  font-weight: 100;
+  font-size: 70px;
+  letter-spacing: -1px;
+  line-height: 1.2em;
+}
+
+.text-large {
+  font-weight: 100;
+  font-size: 50px;
+  letter-spacing: 0;
+  line-height: 1.2em;
+}
+
+.text-normal {
+  font-weight: 100;
+  font-size: 40px;
+  letter-spacing: 0;
+  line-height: 1.2em;
+}
+
+.text-small {
+  font-weight: 100;
+  font-size: 34px;
+  letter-spacing: 0;
+  line-height: 1.2em;
+}
+
+.text-x-small {
+  font-weight: 100;
+  font-size: 30px;
+  letter-spacing: 1px;
+  line-height: 1.18em;
+}
+
+/* Footer-style text. */
+.text-minor {
+  font-weight: 300;
+  font-size: 26px;
+  line-height: 1.2em;
+}
+
+/* Detected by the javascript to automatically size text. */
+.text-auto-size {
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+/* Forces text onto a single line, ellipsized at the end. */
+.single-line {
+  height: 1.2em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
