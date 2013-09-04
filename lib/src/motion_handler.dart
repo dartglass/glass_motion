@@ -43,9 +43,10 @@ class MotionHandler{
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
     
+    if(event.accelerationIncludingGravity.y.abs() < 0.001) return; // Compensate for Google glass tweeky acceleration
+    
     accelerationVectorPrevious = accelerationVector.clone();
     accelerationVector.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
-    
     accelerationVectorNormalized = accelerationVector.normalized();
     
     // Do Gravity Compensation
