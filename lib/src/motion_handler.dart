@@ -15,7 +15,7 @@ class MotionHandler{
   double get acceleration => accelerationVectorGravityComp.length;
   double get yaw => Math.atan(accelerationVectorNormalized.x/(-accelerationVectorNormalized.y))*radians2degrees;
   double get pitch => Math.atan((accelerationVectorNormalized.x*accelerationVectorNormalized.x + (accelerationVectorNormalized.y)*(accelerationVectorNormalized.y))/accelerationVectorNormalized.z)*radians2degrees;
-  
+  double get tilt => Math.atan(accelerationVectorNormalized.z/(-accelerationVectorNormalized.y))*radians2degrees;
   
   int updateRate;
   int _previousTimestamp;

@@ -31,6 +31,7 @@ class GlassMotion {
  double get movement => _motionHandler.getAvgMovement();
  double get yaw => _motionHandler.yaw;
  double get pitch => _motionHandler.pitch;
+ double get tilt => _motionHandler.tilt;
  
   _onDeviceMotion(DeviceMotionEvent event){
     
