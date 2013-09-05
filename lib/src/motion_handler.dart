@@ -18,11 +18,12 @@ class MotionHandler{
   
   Vector3 accelerationVector;
   Vector3 accelerationVectorPrevious;
+  Vector3 accelerationVectorDelta;
   Vector3 accelerationVectorNormalized;
     
   Vector3 accelerationVectorGravityCompensated;
   Vector3 _gravityComp; // Gravity Compensation vector
-  
+  Vector3 _vector;
   Vector3 accelerationVectorGravityCompOLD;
    
   MotionHandler(){
@@ -30,25 +31,33 @@ class MotionHandler{
     
     accelerationHistory = new List<double>();
     
-    accelerationVector = new Vector3(0.0, 0.0, 0.0);
-    accelerationVectorPrevious = new Vector3(0.0, 0.0, 0.0);
+    accelerationVector = new Vector3(0.0, 9.0, 0.0);
+    accelerationVectorPrevious = new Vector3(0.0, 9.0, 0.0);
     accelerationVectorNormalized = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorGravityCompensated = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorDelta = new Vector3(0.0, 0.0, 0.0);
     _gravityComp = new Vector3(0.0, 0.0, 0.0);
+    _vector = new Vector3(0.0, 0.0, 0.0);
   }
   
   
   void onDeviceMotion(DeviceMotionEvent event){
     
+    _vector.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
+    accelerationVectorDelta = _vector.clone().sub(accelerationVectorPrevious);
+    
+    if(accelerationVectorDelta.length > 8.0){ // Compensate for Google glass tweeky acceleration
+      print("${_vector.toString()}  Δ:${_vector.length} ");
+      return;
+    }
+
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
-    
-    if(event.accelerationIncludingGravity.y.abs() < 0.001) return; // Compensate for Google glass tweeky acceleration
-    
+      
     accelerationVectorPrevious = accelerationVector.clone();
-    accelerationVector.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
+    accelerationVector = _vector.clone();//.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
     accelerationVectorNormalized = accelerationVector.normalized();
-    
+
     // Do Gravity Compensation
     _alpha = timeConstant / (timeConstant + updateRate); // Calculate how fast we need to compensante faster if updateRate > timeConstant
     _gravityComp.scale(_alpha);
