@@ -19,12 +19,18 @@ void main() {
   num prevx = (canvas.width / 2);
   num prevy = (canvas.height / 2);
   
+  num yaw = 0;
+  num tilt = 0;
+      
   canvas.context2D.strokeStyle = "white";
   
   glassMotion.onMotionUpdate = ((e){
 
-    xPos =  (glassMotion.yaw / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
-    yPos =  (glassMotion.tilt / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
+    yaw = (glassMotion.yaw * 0.2) + yaw *0.8;
+    tilt = (glassMotion.tilt * 0.2) + tilt*0.8;
+    
+    xPos =  (yaw / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
+    yPos =  (tilt / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
     
     // draw to new head postion;
     canvas.context2D.beginPath();
