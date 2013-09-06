@@ -4,6 +4,7 @@ class MotionHandler{
   
   static const double timeConstant = 500.0; // For gravity Compensation update intervals > then timeConstant will correct faster
   static const avgMovementSampleSize = 20;
+  static const tweekyVectorThreshold = 10;
   
   double _alpha;
   List<double> accelerationHistory;
@@ -15,10 +16,12 @@ class MotionHandler{
   
   int updateRate;
   int _previousTimestamp;
+  int _skipCount;
   
   Vector3 accelerationVector;
   Vector3 accelerationVectorPrevious;
   Vector3 accelerationVectorDelta;
+  Vector3 accelerationVectorDeltaSum;
   Vector3 accelerationVectorNormalized;
     
   Vector3 accelerationVectorGravityCompensated;
@@ -28,45 +31,46 @@ class MotionHandler{
    
   MotionHandler(){
     _previousTimestamp = 0;
-    
     accelerationHistory = new List<double>();
     
-    accelerationVector = new Vector3(0.0, 9.0, 0.0);
-    accelerationVectorPrevious = new Vector3(0.0, 9.0, 0.0);
+    accelerationVector = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorPrevious = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorNormalized = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorGravityCompensated = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorDelta = new Vector3(0.0, 0.0, 0.0);
+    accelerationVectorDeltaSum = new Vector3(0.0, 0.0, 0.0);
     _gravityComp = new Vector3(0.0, 0.0, 0.0);
     _vector = new Vector3(0.0, 0.0, 0.0);
   }
   
   
   void onDeviceMotion(DeviceMotionEvent event){
-    
     _vector.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
-    accelerationVectorDelta = _vector.clone().sub(accelerationVectorPrevious);
-    
-    if(accelerationVectorDelta.length > 8.0){ // Compensate for Google glass tweeky acceleration
-      print("${_vector.toString()}  Δ:${_vector.length} ");
+
+    if(_vector.length2 < tweekyVectorThreshold){ // Compensate for Google glass tweeky acceleration values
+      print("Tweeky Vector ${_vector.toString()} ${_vector.length2} ");
       return;
     }
-
+    
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
-      
-    accelerationVectorPrevious = accelerationVector.clone();
-    accelerationVector = _vector.clone();//.setValues(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z);
+    
+    accelerationVector = _vector.clone();
+    accelerationVectorDelta = _vector.clone().sub(accelerationVectorPrevious);
+    accelerationVectorDeltaSum.add(accelerationVectorDelta);
+    accelerationVectorPrevious = accelerationVector.clone(); 
     accelerationVectorNormalized = accelerationVector.normalized();
-
+    
+    //print("${_vector.x.toString()},${_vector.y.toString()},${_vector.z.toString()},${updateRate.toString()},${_vector.length2}");
+   
     // Do Gravity Compensation
     _alpha = timeConstant / (timeConstant + updateRate); // Calculate how fast we need to compensante faster if updateRate > timeConstant
     _gravityComp.scale(_alpha);
     _gravityComp.add(accelerationVector.clone().scaled(1-_alpha)); 
-    
     accelerationVectorGravityCompensated = accelerationVector.clone().sub(_gravityComp); 
     
+    // Buffer Gravity Vector
     accelerationHistory.add(accelerationVectorGravityCompensated.length);
-    
     if(accelerationHistory.length > avgMovementSampleSize){
       accelerationHistory.removeAt(0);  
     }

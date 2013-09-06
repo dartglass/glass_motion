@@ -33,6 +33,7 @@ class GlassMotion {
  double get pitch => _motionHandler.pitch;
  double get tilt => _motionHandler.tilt;
  
+
   _onDeviceMotion(DeviceMotionEvent event){
     
     if(!motionEnable) return;
