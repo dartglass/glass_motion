@@ -4,6 +4,7 @@ import 'package:glass_motion/glass_motion.dart';
 void main() {
   
   GlassMotion glassMotion = new GlassMotion(window);
+
   CanvasElement canvas = document.query('#canvas');
   ImageElement testImage;
  
@@ -21,13 +22,23 @@ void main() {
   
   num yaw = 0;
   num tilt = 0;
+  num movement = 0;
       
-  canvas.context2D.strokeStyle = "white";
+  canvas.context2D.strokeStyle = "black";
   
-  glassMotion.onMotionUpdate = ((e){
+  window.onScroll.listen((e){
+    canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
+  });
 
-    yaw = (glassMotion.yaw * 0.2) + yaw *0.8;
-    tilt = (glassMotion.tilt * 0.2) + tilt*0.8;
+  glassMotion.onMotionUpdate = ((e){
+    movement = glassMotion.movement;
+    
+    if(movement > 3.0){
+      canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    yaw = (glassMotion.yaw * 0.2) + yaw * 0.8; // Add some smoothing
+    tilt = (glassMotion.tilt * 0.2) + tilt * 0.8;
     
     xPos =  (yaw / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
     yPos =  (tilt / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
@@ -37,6 +48,7 @@ void main() {
     canvas.context2D.moveTo(prevx, prevy);
     canvas.context2D.lineTo(xPos, yPos);
     canvas.context2D.stroke();
+    
     canvas.context2D.closePath();
     
     prevx = xPos;
