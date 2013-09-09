@@ -15,8 +15,8 @@ void main() {
   num tiltRangeMin = -30;
   num tiltRangeMax = 30;
 
-  num yaw = 0;
-  num tilt = 0;
+  num roll = 0;
+  num pitch = 0;
 
   num xPos = 0;
   num yPos = 0;
@@ -31,14 +31,14 @@ void main() {
   crosshairWhite.src = "images/crosshair_white.png";
 
   glassMotion.onMotionUpdate = ((e){
-    yaw = glassMotion.yaw * 0.2 + yaw * 0.8;
-    tilt = glassMotion.tilt * 0.2 + tilt * 0.8;
+    roll = glassMotion.roll * 0.2 + roll * 0.8;
+    pitch = glassMotion.pitch * 0.2 + pitch * 0.8;
 
-    xPos =  ((glassMotion.yaw / (yawRangeMax-yawRangeMin)) *
+    xPos =  ((glassMotion.roll / (yawRangeMax-yawRangeMin)) *
         canvas.width - (crosshairGreen.width / 2) +
         (canvas.width / 2)).clamp(- (crosshairGreen.width / 2),
             canvas.width- (crosshairGreen.width / 2));
-    yPos =  ((glassMotion.tilt / (tiltRangeMax-tiltRangeMin)) *
+    yPos =  ((glassMotion.pitch / (tiltRangeMax-tiltRangeMin)) *
         canvas.height - (crosshairGreen.height / 2) +
         (canvas.height / 2)).clamp(- (crosshairGreen.width / 2),
             canvas.height- (crosshairGreen.width / 2));
