@@ -30,7 +30,7 @@ void main() {
   crosshairWhite = new Element.tag('img');
   crosshairWhite.src = "images/crosshair_white.png";
 
-  glassMotion.onMotionUpdate = ((e){
+  glassMotion.onMotion.listen((e){
     roll = glassMotion.roll * 0.2 + roll * 0.8;
     pitch = glassMotion.pitch * 0.2 + pitch * 0.8;
 

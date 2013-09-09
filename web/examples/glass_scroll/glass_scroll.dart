@@ -8,7 +8,7 @@ void main() {
   GlassMotion glassMotion = new GlassMotion(window);
   double headTilt = 0.0;
 
-  glassMotion.onMotionUpdate = ((e){
+  glassMotion.onMotion.listen((e){
     headTilt = headTilt*0.8 + glassMotion.pitch*0.2;
   });
 

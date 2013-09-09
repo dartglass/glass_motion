@@ -30,7 +30,7 @@ void main() {
     canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
   });
 
-  glassMotion.onMotionUpdate = ((e){
+  glassMotion.onMotion.listen((e){
     movement = glassMotion.movement;
     
     if(movement > 3.0){
