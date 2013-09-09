@@ -27,18 +27,13 @@ class GlassMotion {
     motionEnable = true;
   }
  
- double get acceleration => _motionHandler.acceleration;
+ double get acceleration => _motionHandler.getAcceleration();
  double get movement => _motionHandler.getMovement();
- double get roll => _motionHandler.roll;
- double get pitch => _motionHandler.pitch;
-// Vector3 get accelerationV => _motionHandler.getAcceleration();
- 
- //double get x => _motionHandler.xPosition; 
-// double get y => _motionHandler.yPosition;
-// double get z => _motionHandler.zPosition;
+ double get roll => _motionHandler.getRoll();
+ double get pitch => _motionHandler.getPitch();
  
  zeroPosition(){
-  // _motionHandler.zeroPosition();  
+
  }
  
  

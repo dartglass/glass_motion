@@ -7,30 +7,23 @@ class MotionHandler{
   static const avgAccelerationSampleSize = 1000;
   static const tweekyVectorThreshold = 10;
   
-  double get acceleration => accelerationVector.length;
-  double get roll => Math.atan(accelerationVectorNormalized.x/(-accelerationVectorNormalized.y))*radians2degrees;
-  double get pitch => Math.atan(accelerationVectorNormalized.z/(-accelerationVectorNormalized.y))*radians2degrees;
-  //double get pitch => Math.atan((accelerationVectorNormalized.x*accelerationVectorNormalized.x + (accelerationVectorNormalized.y)*(accelerationVectorNormalized.y))/accelerationVectorNormalized.z)*radians2degrees;
-  
   int updateRate;
   int _previousTimestamp;
   int _skipCount;
   
   Vector3 accelerationVector;
   Vector3 accelerationVectorDelta;
-  Vector3 accelerationVectorNormalized;
+  Vector3 _vectorN;
   Vector3 _vector;
    
   List<Vector3> accelerationHistory;
   List<Vector3> accelerationDeltaHistory;
    
-  
-  
-  MotionHandler(){
+   MotionHandler(){
     _previousTimestamp = 0;
+    
     accelerationHistory = new List<Vector3>();
     accelerationDeltaHistory = new List<Vector3>();
-    
     accelerationVector = new Vector3(0.0, 0.0, 0.0);
     accelerationVectorDelta = new Vector3(0.0, 0.0, 0.0);
 
@@ -43,16 +36,14 @@ class MotionHandler{
                       event.accelerationIncludingGravity.y, 
                       event.accelerationIncludingGravity.z);
 
-    if(_vector.length2 < tweekyVectorThreshold){ // Compensate for Google glass tweeky acceleration values
-      print("Tweeky Vector ${_vector.toString()} ${_vector.length2} ");
-      return;
-    }
+    // Compensate for Google glass tweeky acceleration values
+    if(_vector.length2 < tweekyVectorThreshold) return;
     
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
     
     accelerationVectorDelta = _vector.clone().sub(accelerationVector);
-    accelerationVectorNormalized = _vector.clone().normalized();
+    _vectorN = _vector.clone().normalized();
     accelerationVector = _vector.clone();
 
     
@@ -81,5 +72,16 @@ class MotionHandler{
     return totalMagnitude/count;
   }
   
+  double getAcceleration(){
+    return accelerationVector.length;
+  }
+  
+  double getRoll(){
+    return  Math.atan(_vectorN.x / (-_vectorN.y)) * radians2degrees;
+  }
+  
+  double getPitch(){
+    return Math.atan(_vectorN.z / (-_vectorN.y)) * radians2degrees;
+  }
   
 }
