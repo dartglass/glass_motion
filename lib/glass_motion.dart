@@ -14,7 +14,8 @@ class GlassMotion {
   Window window;
   MotionHandler _motionHandler = new MotionHandler();
   
-  Stream onMotion;
+  Stream onMotion; // called when there is a motion update
+  
   var streamController = new StreamController();
 
   GlassMotion(this.window){
@@ -35,8 +36,9 @@ class GlassMotion {
   _onDeviceMotion(DeviceMotionEvent event){
     if(!streamController.hasListener) return;
     
-    _motionHandler.onDeviceMotion(event);
-    streamController.add(onMotion);
+    if(_motionHandler.onDeviceMotion(event)){
+      streamController.add(onMotion);
+    }
  }
   
 }

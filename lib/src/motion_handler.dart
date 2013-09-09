@@ -29,15 +29,15 @@ class MotionHandler{
   }
   
   
-  void onDeviceMotion(DeviceMotionEvent event){
+  bool onDeviceMotion(DeviceMotionEvent event){
     
     _vector.setValues(event.accelerationIncludingGravity.x, 
                       event.accelerationIncludingGravity.y, 
                       event.accelerationIncludingGravity.z);
 
     // Compensate for Google glass tweeky acceleration values
-    if(_vector.length2 < tweekyVectorThreshold) return;
-    
+    if(_vector.length2 < tweekyVectorThreshold) return false;
+        
     // Calculate how many milliseconds sence last update
     updateRate = event.timeStamp - _previousTimestamp;
     _previousTimestamp = event.timeStamp;
@@ -57,6 +57,8 @@ class MotionHandler{
     if(accelerationHistory.length > avgAccelerationSampleSize){
       accelerationHistory.removeAt(0);
     }
+    
+    return true;
   }
   
   /** Get the average amount of movement as determined by the sample size */
