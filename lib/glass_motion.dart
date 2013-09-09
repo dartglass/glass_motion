@@ -28,12 +28,20 @@ class GlassMotion {
   }
  
  double get acceleration => _motionHandler.acceleration;
- double get movement => _motionHandler.getAvgMovement();
- double get yaw => _motionHandler.yaw;
+ double get movement => _motionHandler.getMovement();
+ double get roll => _motionHandler.roll;
  double get pitch => _motionHandler.pitch;
- double get tilt => _motionHandler.tilt;
+ Vector3 get accelerationV => _motionHandler.getAcceleration();
  
-
+ double get x => _motionHandler.xPosition; 
+ double get y => _motionHandler.yPosition;
+ double get z => _motionHandler.zPosition;
+ 
+ zeroPosition(){
+   _motionHandler.zeroPosition();  
+ }
+ 
+ 
   _onDeviceMotion(DeviceMotionEvent event){
     
     if(!motionEnable) return;
