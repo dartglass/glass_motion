@@ -20,8 +20,8 @@ void main() {
   num prevx = (canvas.width / 2);
   num prevy = (canvas.height / 2);
   
-  num yaw = 0;
-  num tilt = 0;
+  num roll = 0;
+  num pitch = 0;
   num movement = 0;
       
   canvas.context2D.strokeStyle = "black";
@@ -37,11 +37,11 @@ void main() {
       canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
     }
     
-    yaw = (glassMotion.yaw * 0.2) + yaw * 0.8; // Add some smoothing
-    tilt = (glassMotion.tilt * 0.2) + tilt * 0.8;
+    roll = (glassMotion.roll * 0.2) + roll * 0.8; // Add some smoothing
+    pitch = (glassMotion.pitch * 0.2) + pitch * 0.8;
     
-    xPos =  (yaw / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
-    yPos =  (tilt / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
+    xPos =  (roll / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
+    yPos =  (pitch / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
     
     // draw to new head postion;
     canvas.context2D.beginPath();
