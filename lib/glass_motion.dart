@@ -27,7 +27,8 @@ class GlassMotion {
     motionEnable = true;
   }
  
- double get acceleration => _motionHandler.getAcceleration();
+ double get acceleration => _motionHandler.getInstantaneousAcceleration();
+ double get accelerationDelta => _motionHandler.getDeltaAcceleration();
  double get movement => _motionHandler.getMovement();
  double get roll => _motionHandler.getRoll();
  double get pitch => _motionHandler.getPitch();
