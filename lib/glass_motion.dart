@@ -5,8 +5,8 @@ import 'dart:async';
 import 'dart:math' as Math;
 import 'package:vector_math/vector_math.dart';
 
-class GlassMotion {
-  
+class GlassMotion 
+{
   static const avgMovementSampleSize = 20;
   static const avgDeltaSampleSize = 10;
   static const avgAccelerationSampleSize = 1000;
@@ -25,6 +25,8 @@ class GlassMotion {
 
   Stream onMotion; // called when there is a motion update
   StreamController streamController = new StreamController();
+  
+  Calibration calibration = new Calibration();
 
   /** Number of milliseconds since last position update */
   int get deltaTime => _updateRate;
@@ -110,5 +112,21 @@ class GlassMotion {
     }
   }
 
+}
+
+class Calibration
+{
+  CalibrationLimits roll = new CalibrationLimits(-30,30); 
+  CalibrationLimits pitch = new CalibrationLimits(-30,30); 
+  Calibration();
+}
+
+class CalibrationLimits
+{
+  num min;
+  num max;
+  CalibrationLimits(this.min, this.max);
+  
+  num get range => max-min;
 }
 
