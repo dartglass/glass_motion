@@ -78,7 +78,7 @@ class GlassMotion
                                  event.accelerationIncludingGravity.z);
 
     // Compensate for Google glass tweeky acceleration values
-    if(vector.length2 < tweekyVectorThreshold) return false;
+    if(vector.length2 < tweekyVectorThreshold) return;
     
     // Calculate how many milliseconds since last update
     _updateRate = event.timeStamp - _previousTimestamp;
@@ -104,6 +104,21 @@ class GlassMotion
       totalMagnitude += v.length2;    
     }
     return totalMagnitude/count;
+  }
+  
+  /** Get the average amount of movement as determined by the sample size */
+  double _movement(int samples){
+    if(accelerationDeltaHistory.isEmpty) return 0.0;
+    
+    int count = accelerationDeltaHistory.length;
+    
+    if(samples > count) samples = count;
+    
+    double totalMagnitude = 0.0;
+    for(Vector3 v in accelerationDeltaHistory.getRange(count - samples, count)){
+      totalMagnitude += v.length2;    
+    }
+    return totalMagnitude / samples;
   }
   
   /** Add to our acceleration vector history */
