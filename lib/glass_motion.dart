@@ -34,15 +34,6 @@ class GlassMotion
     if(!streamController.hasListener) return;
     if(streamController.isPaused) return;
     
-//    Vector3 vector = new Vector3(event.accelerationIncludingGravity.x, 
-//                                 event.accelerationIncludingGravity.y, 
-//                                 event.accelerationIncludingGravity.z);
-//    // Compensate for Google glass tweeky acceleration values
-//    if(vector.length2 < tweekyVectorThreshold){
-//      print("Tweeky Vector: ${vector.toString()}");
-//      return;
-//    }
-
     if(acceleration.setValuesFromEvent(event)){
       movement.addDeltaVector(acceleration.vectorDelta);
       streamController.add(onMotion); // Send off our motion event update
@@ -124,6 +115,9 @@ class Orientation
 
 class Acceleration
 {
+  static const tweekyVectorThresholdMin = 10;
+  static const tweekyVectorThresholdMax = 1500;
+  
   Vector3 vector;
   Vector3 vectorPrevious;
   int timeStamp = 0;
@@ -166,12 +160,23 @@ class Acceleration
   
   bool setValuesFromEvent(DeviceMotionEvent event){
     vector.copyInto(vectorPrevious); 
-    previousTimeStamp = timeStamp; 
-    timeStamp = event.timeStamp;
-
+    
     vector.x = event.accelerationIncludingGravity.x;
     vector.y = event.accelerationIncludingGravity.y;
     vector.z = event.accelerationIncludingGravity.z;
+    
+    previousTimeStamp = timeStamp; 
+    timeStamp = event.timeStamp;
+    
+    num length2 = vector.length2;
+
+    // Compensate for Google glass tweeky acceleration values
+    if(length2 < tweekyVectorThresholdMin || length2 > tweekyVectorThresholdMax){
+      print("Tweeky Vector: ${vector.toString()} ${length2.toString()}");
+      vectorPrevious.copyInto(vector);
+      return false;
+    }
+    
     return true;
   }
   
