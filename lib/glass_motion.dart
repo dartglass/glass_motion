@@ -17,8 +17,10 @@ class GlassMotion
   
   Vector3 accelerationVector = new Vector3(0.0, 0.0, 0.0);
   Vector3 accelerationVectorDelta = new Vector3(0.0, 0.0, 0.0);
-  Orientation orientation = new Orientation(0.0, 0.0, 0.0);
   
+  Orientation orientation = new Orientation(0.0, 0.0, 0.0);
+  Acceleration acceleration = new Acceleration(0.0, 0.0, 0.0);
+   
   List<Vector3> accelerationHistory = new List<Vector3>();
   List<Vector3> accelerationDeltaHistory = new List<Vector3>();
 
@@ -218,3 +220,48 @@ class Orientation
   String toString() => "[${alpha.toStringAsFixed(1)},${alpha.toStringAsFixed(1)},${alpha.toStringAsFixed(1)}]";
 }
 
+class Acceleration
+{
+  Vector3 vector;
+  Vector3 vectorPrevious;
+  int timeStamp = 0;
+  int previousTimeStamp = 0;
+  
+  num get x => vector.x;
+  num get y => vector.y;
+  num get z => vector.z;
+  
+  num get xDelta => vector.x - vectorPrevious.x;
+  num get yDelta => vector.y - vectorPrevious.y;
+  num get zDelta => vector.z - vectorPrevious.z;
+  
+  num get interval => timeStamp - previousTimeStamp;
+  num get magnitude => vector.length;
+  num get magnitude2 => vector.length2;
+  
+  Vector3 get vectorDelta => vector.clone().sub(vectorPrevious);
+  
+  Acceleration(num x_, num y_, num z_){
+    vector = new Vector3(x_, y_, z_);
+    vectorPrevious = new Vector3(x_, y_, z_);
+  }
+  
+  void setValues(num x_, num y_, num z_){
+    vector.x = x_;
+    vector.y = y_;
+    vector.z = z_; 
+  }
+  
+  void setValuesFromEvent(DeviceMotionEvent event){
+    vector.copyInto(vectorPrevious); 
+    previousTimeStamp = timeStamp; 
+    timeStamp = event.timeStamp;
+    
+    vector.x = event.acceleration.x;
+    vector.y = event.acceleration.y;
+    vector.z = event.acceleration.z;
+  }
+  
+  String toString() => "[${vector.x.toStringAsFixed(3)},${vector.y.toStringAsFixed(3)},${vector.z.toStringAsFixed(3)}]";
+  
+}
