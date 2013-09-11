@@ -9,7 +9,7 @@ void main() {
   double headTilt = 0.0;
 
   glassMotion.onMotion.listen((e){
-    headTilt = headTilt*0.8 + glassMotion.pitch*0.2;
+    headTilt = headTilt*0.8 + glassMotion.position.pitch*0.2;
   });
 
   int position = 0;

@@ -7,12 +7,12 @@ void main() {
   GlassMotion glassMotion = new GlassMotion(window);
   
   glassMotion.onMotion.listen((e){
-    query("#sample_text_id")..text   = " Acceleration : ${glassMotion.accelerationDelta.toStringAsFixed(3)}"; 
-    query("#sample_text_id2")..text   = " Roll : ${glassMotion.roll.toStringAsFixed(0)}° , Pitch: ${glassMotion.pitch.toStringAsFixed(0)}°"; 
-    query("#sample_text_id3")..text   = " Avg Movement : ${glassMotion.movement.toStringAsFixed(3)}"; 
-    
-    //query("#sample_text_id4")..text   = "${glassMotion.accelerationV.toString()}";// Position: ${glassMotion.x.toStringAsFixed(1)}, ${glassMotion.y.toStringAsFixed(1)}, ${glassMotion.z.toStringAsFixed(1)}"; 
-    //query("#sample_text_id4")..text   = " Position: ${glassMotion.x.toStringAsFixed(1)}, ${glassMotion.y.toStringAsFixed(1)}, ${glassMotion.z.toStringAsFixed(1)}"; 
-  });
+    query("#sample_text_id")..text   = " Acceleration : ${glassMotion.acceleration.magnitude.toStringAsFixed(3)}"; 
+    query("#sample_text_id2")..text   = " Roll : ${glassMotion.position.roll.toStringAsFixed(0)}° , Pitch: ${glassMotion.position.pitch.toStringAsFixed(0)}°"; 
+    query("#sample_text_id3")..text   = "Acceleration ${glassMotion.acceleration.toString()}";
+    query("#sample_text_id4")..text   = "Orientation ${glassMotion.orientation.toString()}"; 
+    query("#sample_text_id5")..text   = "Movement ${glassMotion.movement.toString()}"; 
+      
+   });
 
 }

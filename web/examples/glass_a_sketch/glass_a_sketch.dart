@@ -31,14 +31,14 @@ void main() {
   });
 
   glassMotion.onMotion.listen((e){
-    movement = glassMotion.movement;
+    movement = glassMotion.movement.amount;
     
     if(movement > 3.0){
       canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
     }
     
-    roll = (glassMotion.roll * 0.2) + roll * 0.8; // Add some smoothing
-    pitch = (glassMotion.pitch * 0.2) + pitch * 0.8;
+    roll = (glassMotion.position.roll * 0.2) + roll * 0.8; // Add some smoothing
+    pitch = (glassMotion.position.pitch * 0.2) + pitch * 0.8;
     
     xPos =  (roll / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
     yPos =  (pitch / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
