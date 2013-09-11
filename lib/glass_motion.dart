@@ -34,8 +34,8 @@ class GlassMotion
   /** Number of milliseconds since last position update */
   int get deltaTime => _updateRate;
   
-  /** Returns the magnitude of the acceleration vector */
-  double get acceleration => accelerationVector.length;
+ // /** Returns the magnitude of the acceleration vector */
+ // double get acceleration => accelerationVector.length;
   
   /** The magnitude of the change in the acceleration vector */
   double get accelerationDelta => accelerationVectorDelta.length;
@@ -168,7 +168,6 @@ class CalibrationLimits
   num get range => max-min;
 }
 
-
 class Orientation
 {
   bool absolute;
@@ -183,10 +182,10 @@ class Orientation
   int timeStamp = 0;
   int previousTimeStamp = 0;
   
-  get interval => timeStamp - previousTimeStamp;
-  get alphaDelta => alpha - previousAlpha; 
-  get betaDelta => beta - previousBeta; 
-  get gammaDelta => gamma - previousGamma; 
+  num get interval => timeStamp - previousTimeStamp;
+  num get alphaDelta => alpha - previousAlpha; 
+  num get betaDelta => beta - previousBeta; 
+  num get gammaDelta => gamma - previousGamma; 
   
   Orientation(this.alpha, this.beta, this.gamma){
     previousAlpha = alpha;
