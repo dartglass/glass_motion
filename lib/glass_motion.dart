@@ -17,7 +17,8 @@ class GlassMotion
   
   Vector3 accelerationVector = new Vector3(0.0, 0.0, 0.0);
   Vector3 accelerationVectorDelta = new Vector3(0.0, 0.0, 0.0);
- 
+  Orientation orientation = new Orientation(0.0, 0.0, 0.0);
+  
   List<Vector3> accelerationHistory = new List<Vector3>();
   List<Vector3> accelerationDeltaHistory = new List<Vector3>();
 
@@ -64,10 +65,9 @@ class GlassMotion
  GlassMotion(this._window){
    onMotion = streamController.stream;
    _window.onDeviceMotion.listen((e) => _onDeviceMotion(e));
-   
+   _window.onDeviceOrientation.listen((e) => _onDeviceOrientation(e));
  }
  
-  
  /** Handle the device motion event */
   _onDeviceMotion(DeviceMotionEvent event){
     if(!streamController.hasListener) return;
@@ -78,7 +78,10 @@ class GlassMotion
                                  event.accelerationIncludingGravity.z);
 
     // Compensate for Google glass tweeky acceleration values
-    if(vector.length2 < tweekyVectorThreshold) return;
+    if(vector.length2 < tweekyVectorThreshold){
+      print("Tweeky Vector: ${vector.toString()}");
+      return;
+    }
     
     // Calculate how many milliseconds since last update
     _updateRate = event.timeStamp - _previousTimestamp;
@@ -92,6 +95,14 @@ class GlassMotion
 
     streamController.add(onMotion); // Send off our motion event update
   }
+  
+  /** Handle the device orientation event */
+  _onDeviceOrientation(DeviceOrientationEvent event){ 
+    orientation.setValuesFromEvent(event);
+
+    //streamController.add(onMotion);
+  } 
+  
 
   /** Get the average amount of movement as determined by the sample size */
   double _getMovement(){
@@ -153,5 +164,57 @@ class CalibrationLimits
   CalibrationLimits(this.min, this.max);
   
   num get range => max-min;
+}
+
+
+class Orientation
+{
+  bool absolute;
+  num alpha;    //motion of the device around the z axis (degrees)
+  num beta;     //motion of the device around the x axis (degrees)
+  num gamma;    //motion of the device around the y axis (degrees)
+  
+  num previousAlpha;
+  num previousBeta;
+  num previousGamma;
+  
+  int timeStamp = 0;
+  int previousTimeStamp = 0;
+  
+  get interval => timeStamp - previousTimeStamp;
+  get alphaDelta => alpha - previousAlpha; 
+  get betaDelta => beta - previousBeta; 
+  get gammaDelta => gamma - previousGamma; 
+  
+  Orientation(this.alpha, this.beta, this.gamma){
+    previousAlpha = alpha;
+    previousBeta = beta;
+    previousGamma = gamma;
+  }
+  
+  void setValues(num a, num b, num g){
+    previousAlpha = alpha;
+    previousBeta = beta;
+    previousGamma = gamma;
+    
+    alpha = a; 
+    beta = b;
+    gamma = g;
+  }
+  
+  void setValuesFromEvent(DeviceOrientationEvent event){
+    previousAlpha = alpha;
+    previousBeta = beta;
+    previousGamma = gamma;
+    previousTimeStamp = timeStamp; 
+    
+    absolute = event.absolute;
+    alpha = event.alpha; 
+    beta = event.beta;
+    gamma = event.gamma;
+    timeStamp = event.timeStamp;
+  }
+  
+  String toString() => "[${alpha.toStringAsFixed(1)},${alpha.toStringAsFixed(1)},${alpha.toStringAsFixed(1)}]";
 }
 
