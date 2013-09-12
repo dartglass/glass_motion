@@ -15,7 +15,7 @@ class GlassMotion
 {
   static const tweekyVectorThreshold = 10;
   
-  Orientation orientation = new Orientation(0.0, 0.0, 0.0);
+  Orientation orientation = new Orientation();
   Acceleration acceleration = new Acceleration(0.0, 0.0, 0.0);
   Calibration calibration = new Calibration();
   Position position;
@@ -33,6 +33,7 @@ class GlassMotion
    
    position = new Position(orientation, acceleration, calibration);
    movement = new Movement(calibration);
+   
  }
  
  /** Handle the device motion event */
@@ -42,6 +43,7 @@ class GlassMotion
     
     if(acceleration.setValuesFromEvent(event)){
       movement.addDeltaVector(acceleration.vectorDelta);
+         
       streamController.add(onMotion); // Send off our motion event update
     }
   }
