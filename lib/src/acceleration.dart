@@ -5,8 +5,8 @@ class Acceleration
   static const tweekyVectorThresholdMin = 10;
   static const tweekyVectorThresholdMax = 1500;
   
-  Vector3 vector;
-  Vector3 vectorPrevious;
+  Vector3 vector = new Vector3(0.0, 0.0, 0.0);
+  Vector3 vectorPrevious = new Vector3(0.0, 0.0, 0.0);
   int timeStamp = 0;
   int previousTimeStamp = 0;
   
@@ -14,11 +14,12 @@ class Acceleration
   num get y => vector.y;
   num get z => vector.z;
   
-  num get xDelta => vector.x - vectorPrevious.x;
-  num get yDelta => vector.y - vectorPrevious.y;
-  num get zDelta => vector.z - vectorPrevious.z;
+  num get dx => vector.x - vectorPrevious.x;
+  num get dy => vector.y - vectorPrevious.y;
+  num get dz => vector.z - vectorPrevious.z;
   
-  num get interval => timeStamp - previousTimeStamp;
+  /** delta time */
+  num get dT => timeStamp - previousTimeStamp;
   
   /** The magnitude of the acceleration vector*/
   num get magnitude => vector.length;
@@ -34,10 +35,7 @@ class Acceleration
   
   Vector3 get vectorDelta => vector.clone().sub(vectorPrevious);
   
-  Acceleration(num x_, num y_, num z_){
-    vector = new Vector3(x_, y_, z_);
-    vectorPrevious = new Vector3(x_, y_, z_);
-  }
+  Acceleration();
   
   void setValues(num x_, num y_, num z_){
     vector.x = x_;
@@ -54,6 +52,9 @@ class Acceleration
     
     previousTimeStamp = timeStamp; 
     timeStamp = event.timeStamp;
+    
+    // If no change in time return (first run)
+    if(dT == 0) return false;
     
     num length2 = vector.length2;
 

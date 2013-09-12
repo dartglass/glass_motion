@@ -16,7 +16,7 @@ class GlassMotion
   static const tweekyVectorThreshold = 10;
   
   Orientation orientation = new Orientation();
-  Acceleration acceleration = new Acceleration(0.0, 0.0, 0.0);
+  Acceleration acceleration = new Acceleration();
   Calibration calibration = new Calibration();
   Position position;
   Movement movement;
