@@ -16,12 +16,4 @@ class Position
   double get pitch => Math.atan(acceleration.vector.z / (-acceleration.vector.y))
                                 * radians2degrees;
   
-  num displayWidth = 420;
-  num displayHeight = 240;
-  
-  num get cursorX => (((roll / calibration.roll.range) * displayWidth) + 
-                       (displayWidth / 2)).clamp(0, displayWidth);
-  
-  num get cursorY => (((pitch / calibration.pitch.range) * displayHeight) +
-                       (displayHeight / 2)).clamp(0, displayHeight);
 }
