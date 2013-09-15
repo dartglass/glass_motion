@@ -24,10 +24,12 @@ class GlassMotion
   Window _window;
 
   Stream onMotion; // called when there is a motion update
+  Stream onOrientation; // called when there is a orientation update
   StreamController streamController = new StreamController();
   
  GlassMotion(this._window){
    onMotion = streamController.stream;
+   onOrientation = streamController.stream;
    _window.onDeviceMotion.listen((e) => _onDeviceMotion(e));
    _window.onDeviceOrientation.listen((e) => _onDeviceOrientation(e));
    
@@ -50,7 +52,11 @@ class GlassMotion
   
   /** Handle the device orientation event */
   _onDeviceOrientation(DeviceOrientationEvent event){ 
+    if(!streamController.hasListener) return;
+    if(streamController.isPaused) return;
+    
     orientation.setValuesFromEvent(event);
+    streamController.add(onOrientation);
   } 
 }
 
