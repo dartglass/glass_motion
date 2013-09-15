@@ -80,7 +80,6 @@ class Orientation
     deltaRotation.asRotationMatrix().copyInto(rotationMatrix);
     
     gyroMatrix = gyroMatrix * rotationMatrix;
-  //  print(gyroMatrix.toString());
 
   }
   
