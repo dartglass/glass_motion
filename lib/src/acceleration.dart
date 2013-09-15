@@ -7,6 +7,9 @@ class Acceleration
   
   Vector3 vector = new Vector3(0.0, 0.0, 0.0);
   Vector3 vectorPrevious = new Vector3(0.0, 0.0, 0.0);
+  Vector3 gravity = new Vector3(0.0, 0.0, 0.0);
+  Vector3 linearAcceleration = new Vector3(0.0, 0.0, 0.0);
+  
   int timeStamp = 0;
   int previousTimeStamp = 0;
   
@@ -58,16 +61,22 @@ class Acceleration
     
     num length2 = vector.length2;
 
-    // Compensate for Google glass tweeky acceleration values
-    if(length2 < tweekyVectorThresholdMin || length2 > tweekyVectorThresholdMax){
-      print("Tweeky Vector: ${vector.toString()} ${length2.toString()}");
-      vectorPrevious.copyInto(vector);
-      return false;
-    }
+//    // Compensate for Google glass tweeky acceleration values
+//    if(length2 < tweekyVectorThresholdMin || length2 > tweekyVectorThresholdMax){
+//      print("Tweeky Vector: ${vector.toString()} ${length2.toString()}");
+//      vectorPrevious.copyInto(vector);
+//      return false;
+//    }
+    
+    // calculate gravity
+    gravity.scale(0.8).add(vector.scale(0.2));
+    
+    // Subtract gravity to get linear acceleration
+    linearAcceleration = vector.sub(gravity);
     
     return true;
   }
-  
+ 
   String toString() => "[${vector.x.toStringAsFixed(3)},${vector.y.toStringAsFixed(3)},${vector.z.toStringAsFixed(3)}]";
 }
 
