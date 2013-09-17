@@ -2,58 +2,62 @@ import 'dart:html';
 import 'package:glass_motion/glass_motion.dart';
 
 void main() {
-  
-  GlassMotion glassMotion = new GlassMotion(window);
 
+  GlassMotion glassMotion = new GlassMotion(window);
   CanvasElement canvas = document.query('#canvas');
-  ImageElement testImage;
- 
-  num yawRangeMin = -30;
-  num yawRangeMax = 30;
-  num tiltRangeMin = -30;
-  num tiltRangeMax = 30;
-  num xPos, yPos;
-  
+
+  final num pitchRange = 60;
+  final num pitchOffset = pitchRange / 2;
+
+  final num rollRange = 60;
+  final num rollOffset = rollRange / 2;
+
+  final num width = canvas.width;
+  final num height = canvas.height;
+
+  final num xScale = width / rollRange;
+  final num xOffset = (xScale * rollOffset);
+
+  final num yScale = height / pitchRange;
+  final num yOffset = (yScale * pitchOffset);
+
   canvas.context2D.moveTo((canvas.width / 2), (canvas.height / 2));
-  
+
   // start at center
   num prevx = (canvas.width / 2);
   num prevy = (canvas.height / 2);
-  
+
   num roll = 0;
   num pitch = 0;
   num movement = 0;
-      
+
   canvas.context2D.strokeStyle = "black";
-  
+
   window.onScroll.listen((e){
     canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
   });
 
   glassMotion.onMotion.listen((e){
     movement = glassMotion.movement.amount;
-    
+
     if(movement > 3.0){
       canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
     }
-    
-    roll = (glassMotion.position.roll * 0.2) + roll * 0.8; // Add some smoothing
-    pitch = (glassMotion.position.pitch * 0.2) + pitch * 0.8;
-    
-    xPos =  (roll / (yawRangeMax-yawRangeMin)) * canvas.width + (canvas.width / 2);
-    yPos =  (pitch / (tiltRangeMax-tiltRangeMin)) * canvas.height + (canvas.height / 2);
-    
+    roll = glassMotion.position.roll;
+    pitch = glassMotion.position.pitch;
+
+    num cursorX = ((roll * xScale) + xOffset).clamp(0, width);
+    num cursorY = ((pitch * yScale) + yOffset).clamp(0, height);
+
     // draw to new head postion;
     canvas.context2D.beginPath();
     canvas.context2D.moveTo(prevx, prevy);
-    canvas.context2D.lineTo(xPos, yPos);
+    canvas.context2D.lineTo(cursorX, cursorY);
     canvas.context2D.stroke();
-    
     canvas.context2D.closePath();
-    
-    prevx = xPos;
-    prevy = yPos;
 
+    prevx = cursorX;
+    prevy = cursorY;
   });
 
 }
