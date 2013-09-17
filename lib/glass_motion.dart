@@ -11,10 +11,10 @@ part 'src/calibration.dart';
 part 'src/movement.dart';
 part 'src/position.dart';
 
-class GlassMotion 
+class GlassMotion
 {
   static const tweekyVectorThreshold = 10;
-  
+
   Orientation orientation = new Orientation();
   Acceleration acceleration = new Acceleration();
   Calibration calibration = new Calibration();
@@ -25,38 +25,39 @@ class GlassMotion
 
   Stream onMotion; // called when there is a motion update
   Stream onOrientation; // called when there is a orientation update
-  StreamController streamController = new StreamController();
-  
+  StreamController motionStreamController = new StreamController();
+  StreamController orientationStreamController = new StreamController();
+
  GlassMotion(this._window){
-   onMotion = streamController.stream;
-   onOrientation = streamController.stream;
+   onMotion = motionStreamController.stream;
+   onOrientation = orientationStreamController.stream;
    _window.onDeviceMotion.listen((e) => _onDeviceMotion(e));
    _window.onDeviceOrientation.listen((e) => _onDeviceOrientation(e));
-   
+
    position = new Position(orientation, acceleration, calibration);
    movement = new Movement(calibration);
-   
+
  }
- 
+
  /** Handle the device motion event */
   _onDeviceMotion(DeviceMotionEvent event){
-    if(!streamController.hasListener) return;
-    if(streamController.isPaused) return;
-    
+    if(!motionStreamController.hasListener) return;
+    if(motionStreamController.isPaused) return;
+
     if(acceleration.setValuesFromEvent(event)){
       movement.addDeltaVector(acceleration.vectorDelta);
-         
-      streamController.add(onMotion); // Send off our motion event update
+
+      motionStreamController.add(onMotion); // Send off our motion event update
     }
   }
-  
+
   /** Handle the device orientation event */
-  _onDeviceOrientation(DeviceOrientationEvent event){ 
-    if(!streamController.hasListener) return;
-    if(streamController.isPaused) return;
-    
+  _onDeviceOrientation(DeviceOrientationEvent event){
+    if(!orientationStreamController.hasListener) return;
+    if(orientationStreamController.isPaused) return;
+
     orientation.setValuesFromEvent(event);
-    streamController.add(onOrientation);
-  } 
+    orientationStreamController.add(onOrientation);
+  }
 }
 
