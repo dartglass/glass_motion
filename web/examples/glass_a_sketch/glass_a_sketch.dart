@@ -2,9 +2,9 @@ import 'dart:html';
 import 'package:glass_motion/glass_motion.dart';
 
 void main() {
-
   GlassMotion glassMotion = new GlassMotion(window);
   CanvasElement canvas = document.query('#canvas');
+  CanvasRenderingContext2D context = canvas.context2D;
 
   final num pitchRange = 60;
   final num pitchOffset = pitchRange / 2;
@@ -21,8 +21,6 @@ void main() {
   final num yScale = height / pitchRange;
   final num yOffset = (yScale * pitchOffset);
 
-  canvas.context2D.moveTo((canvas.width / 2), (canvas.height / 2));
-
   // start at center
   num prevx = (canvas.width / 2);
   num prevy = (canvas.height / 2);
@@ -31,18 +29,20 @@ void main() {
   num pitch = 0;
   num movement = 0;
 
-  canvas.context2D.strokeStyle = "black";
+  context
+  ..moveTo((canvas.width / 2), (canvas.height / 2))
+  ..strokeStyle = "black";
 
-  window.onScroll.listen((e){
-    canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
-  });
+  window.onScroll.listen((e) =>
+    context.clearRect(0, 0, canvas.width, canvas.height));
 
   glassMotion.onMotion.listen((e){
     movement = glassMotion.movement.amount;
 
     if(movement > 3.0){
-      canvas.context2D.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
     }
+
     roll = glassMotion.position.roll;
     pitch = glassMotion.position.pitch;
 
@@ -50,14 +50,14 @@ void main() {
     num cursorY = ((pitch * yScale) + yOffset).clamp(0, height);
 
     // draw to new head postion;
-    canvas.context2D.beginPath();
-    canvas.context2D.moveTo(prevx, prevy);
-    canvas.context2D.lineTo(cursorX, cursorY);
-    canvas.context2D.stroke();
-    canvas.context2D.closePath();
+    context
+    ..beginPath()
+    ..moveTo(prevx, prevy)
+    ..lineTo(cursorX, cursorY)
+    ..stroke()
+    ..closePath();
 
     prevx = cursorX;
     prevy = cursorY;
   });
-
 }
