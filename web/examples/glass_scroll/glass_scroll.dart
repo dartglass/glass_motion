@@ -3,19 +3,16 @@ import 'dart:html';
 import 'package:glass_motion/glass_motion.dart';
 
 void main() {
-  int height = 555;
-
   GlassMotion glassMotion = new GlassMotion(window);
+
+  int height = 555;
   double headTilt = 0.0;
-
-  glassMotion.onMotion.listen((e){
-    headTilt = headTilt*0.8 + glassMotion.position.pitch*0.2;
-  });
-
   int position = 0;
 
-  void animate(num highResTime) {
+  glassMotion.onMotion.listen((_) =>
+    headTilt = headTilt*0.8 + glassMotion.position.pitch*0.2);
 
+  void animate(num highResTime) {
     if(highResTime >= 16) {
       if(headTilt.abs() > 4.0){ // min angle to start tilt
         position -= headTilt/2;
@@ -25,6 +22,5 @@ void main() {
     }
     window.requestAnimationFrame(animate);
   }
-
   window.requestAnimationFrame(animate);
 }
