@@ -33,10 +33,10 @@ void main() {
   ..moveTo((canvas.width / 2), (canvas.height / 2))
   ..strokeStyle = "black";
 
-  window.onScroll.listen((e) =>
+  window.onScroll.listen((_) =>
     context.clearRect(0, 0, canvas.width, canvas.height));
 
-  glassMotion.onMotion.listen((e){
+  glassMotion.onMotion.listen((_){
     movement = glassMotion.movement.amount;
 
     if(movement > 3.0){
