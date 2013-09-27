@@ -8,70 +8,70 @@ void main() {
   CanvasElement canvas = document.query('#canvas');
 
   List<Vector3> buffer = new List<Vector3>();
-  
-  var ctx = canvas.context2D;
-  
+  CanvasRenderingContext2D context = canvas.context2D;
+
   final num width = canvas.width;
   final num height = canvas.height;
-  
+
+  final String xColor = "red";
+  final String yColor = "green";
+  final String zColor = "blue";
+
   final double scaleVal = height;
-  
-  draw() {
-    if(buffer.isEmpty) return;
-    ctx.clearRect(0,0,width,height);
-    
-    ctx.lineWidth = 2;
-    
-    ctx.beginPath();
-    ctx.strokeStyle = "red";
-    ctx.moveTo(0, buffer.first.x);
-    int xPos = 0;
-    for(Vector3 val in buffer){
-      ctx.lineTo(xPos, val.x);
-      xPos+=1;
-    }
-    ctx.stroke(); 
-    ctx.closePath();
-    
-    ctx.beginPath();
-    ctx.strokeStyle = "green";
-    ctx.moveTo(0, buffer.first.y);
-    xPos = 0;
-    for(Vector3 val in buffer){
-      ctx.lineTo(xPos, val.y);
-      xPos+=1;
-    }
-    ctx.stroke();   
-    ctx.closePath();
-    
-    ctx.beginPath();
-    ctx.strokeStyle = "blue";
-    ctx.moveTo(0, buffer.first.z);
-    xPos = 0;
-    for(Vector3 val in buffer){
-      ctx.lineTo(xPos, val.z);
-      xPos+=1;
-    }
-    ctx.stroke();   
-    ctx.closePath();
-  }
-  
-  void animate(num highResTime) {
-    if(highResTime >= 16) {
-      draw();    
-    }
-    window.requestAnimationFrame(animate);
-  }
-  window.requestAnimationFrame(animate);
- 
-  glassMotion.onOrientation.listen((e){
+  int xPos = 0;
+
+  glassMotion.onOrientation.listen((_){
     Vector3 val = glassMotion.orientation.axis.clone().normalized();
     val.scale(scaleVal);
     buffer.add(val);
     if(buffer.length > width){
       buffer.removeAt(0);
-    }  
+    }
   });
+
+  draw() {
+    if(buffer.isEmpty) return;
+
+    // Draw vector x axis
+    xPos = 0;
+    context
+      ..clearRect(0,0,width,height)
+      ..lineWidth = 2
+      ..beginPath()
+      ..strokeStyle = xColor
+      ..moveTo(0, buffer.first.x);
+    for(Vector3 val in buffer)
+      context.lineTo(xPos++, val.x);
+    context..stroke()..closePath();
+
+    // Draw vector y axis
+    xPos = 0;
+    context
+      ..beginPath()
+      ..strokeStyle = yColor
+      ..moveTo(0, buffer.first.y);
+    for(Vector3 val in buffer)
+      context.lineTo(xPos++, val.y);
+    context..stroke()..closePath();
+
+    // Draw vector z axis
+    xPos = 0;
+    context
+      ..beginPath()
+      ..strokeStyle = zColor
+      ..moveTo(0, buffer.first.z);
+    for(Vector3 val in buffer)
+      context.lineTo(xPos++, val.z);
+    context..stroke()..closePath();
+  }
+
+  void animate(num highResTime) {
+    if(highResTime >= 16) {
+      draw();
+    }
+    window.requestAnimationFrame(animate);
+  }
+  window.requestAnimationFrame(animate);
 }
 
 
